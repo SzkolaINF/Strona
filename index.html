@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasyno Online</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #141414;
+            color: #ffffff;
+            text-align: center;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative; /* Dodajemy pozycjonowanie dla kontenera */
+        }
+        h1 {
+            font-size: 48px;
+            color: #ffbf00;
+        }
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 15px;
+            margin: 0 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #ffbf00;
+            border-bottom: 2px solid transparent;
+        }
+        .tab.active {
+            border-color: #ffbf00;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .slot-container, .slot-machine {
+            display: inline-block;
+            margin: 0 5px;
+            overflow: hidden;
+            height: 80px;
+            width: 80px;
+            border: 3px solid #ffbf00;
+            border-radius: 10px;
+            background-color: #222;
+            box-shadow: 0 6px 10px rgba(255, 191, 0, 0.5);
+        }
+        .slot {
+            font-size: 50px;
+            line-height: 80px;
+            transition: transform 0.5s ease;
+        }
+        .controls {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 25px;
+            font-size: 20px;
+            margin: 10px;
+            background-color: #ffbf00;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #e6ac00;
+        }
+        input {
+            padding: 10px;
+            font-size: 20px;
+            width: 150px;
+            border: 2px solid #ffbf00;
+            border-radius: 5px;
+            background-color: #333;
+            color: #ffffff;
+        }
+        #balance {
+            position: fixed; /* Przeniesienie do rogu ekranu */
+            top: 20px;       /* Odstęp od góry */
+            right: 20px;     /* Odstęp od prawej krawędzi */
+            font-size: 32px; /* Zwiększenie rozmiaru czcionki */
+            font-weight: bold; /* Użycie pogrubienia */
+            color: #ffbf00;  /* Kolor bilansu */
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kasyno Online</h1>
+
+        <div class="tab-container">
+            <div class="tab active" onclick="openTab('slot-machine')">Slot Machine</div>
+            <div class="tab" onclick="openTab('roulette')">Roulette</div>
+            <div class="tab" onclick="openTab('blackjack')">Blackjack</div>
+        </div>
+
+        <!-- Slot Machine Game -->
+        <div id="slot-machine" class="tab-content active">
+            <h2>Gra Slotowa</h2>
+            <div id="slots">
+                <div class="slot-container"><div class="slot" id="slot1"></div></div>
+                <div class="slot-container"><div class="slot" id="slot2"></div></div>
+                <div class="slot-container"><div class="slot" id="slot3"></div></div>
+            </div>
+
+            <div class="controls">
+                <input type="number" id="bet" placeholder="Wprowadź stawkę" min="1">
+                <button onclick="spin()">Obróć!</button>
+            </div>
+
+            <div class="controls">
+                <input type="number" id="deposit" placeholder="Kwota wpłaty" min="1">
+                <button onclick="deposit()">Wpłać</button>
+            </div>
+
+            <div id="result"></div>
+        </div>
+
+        <!-- Placeholder for Roulette Game -->
+        <div id="roulette" class="tab-content">
+            <h2>Roulette (Wkrótce)</h2>
+            <p>Pracujemy nad dodaniem gry w ruletkę! Wkrótce dostępne.</p>
+        </div>
+
+        <!-- Placeholder for Blackjack Game -->
+        <div id="blackjack" class="tab-content">
+            <h2>Blackjack (Wkrótce)</h2>
+            <p>Pracujemy nad dodaniem gry w blackjacka! Wkrótce dostępne.</p>
+        </div>
+    </div>
+
+    <div id="balance">Bilans: 100</div>
+
+    <script>
+        const symbols = ['🍒', '🍋', '🍊', '🍉', '⭐', '💰', '🔔', '7️⃣'];
+        let balance = 100;  // Wspólny bilans
+        const resultDiv = document.getElementById('result');
+        const balanceDiv = document.getElementById('balance');
+
+        function spin() {
+            const slot1 = document.getElementById('slot1');
+            const slot2 = document.getElementById('slot2');
+            const slot3 = document.getElementById('slot3');
+            const betInput = document.getElementById('bet');
+            let bet = parseInt(betInput.value);
+
+            if (isNaN(bet) || bet <= 0 || bet > balance) {
+                resultDiv.textContent = 'Wprowadź prawidłową stawkę!';
+                return;
+            }
+
+            balance -= bet;
+            updateBalanceDisplay();
+            resultDiv.textContent = 'Kręcenie...';
+
+            animateSlots([slot1, slot2, slot3], bet);
+        }
+
+        function animateSlots(slots, bet) {
+            let currentSpin = 0;
+            const spinInterval = setInterval(() => {
+                slots.forEach(slot => {
+                    slot.textContent = getRandomSymbol();
+                    slot.style.transform = `rotate(${Math.random() * 10 - 5}deg)`;
+                });
+                currentSpin++;
+
+                if (currentSpin >= 10) {
+                    clearInterval(spinInterval);
+                    setTimeout(() => {
+                        slots.forEach(slot => slot.style.transform = 'rotate(0deg)');
+                        checkResult(slots.map(s => s.textContent), bet);
+                    }, 300);
+                }
+            }, 100);
+        }
+
+        function getRandomSymbol() {
+            return symbols[Math.floor(Math.random() * symbols.length)];
+        }
+
+        function checkResult(symbols, bet) {
+            const [symbol1, symbol2, symbol3] = symbols;
+            if (symbol1 === symbol2 && symbol2 === symbol3) {
+                let winAmount = bet * (symbol1 === '7️⃣' ? 10 : 2);
+                resultDiv.textContent = `Gratulacje! Wygrałeś ${winAmount}!`;
+                balance += winAmount;
+            } else {
+                resultDiv.textContent = 'Spróbuj ponownie!';
+            }
+            updateBalanceDisplay();
+        }
+
+        function deposit() {
+            let depositAmount = parseInt(document.getElementById('deposit').value);
+            if (isNaN(depositAmount) || depositAmount <= 0) {
+                resultDiv.textContent = 'Wprowadź prawidłową kwotę!';
+                return;
+            }
+            balance += depositAmount;
+            updateBalanceDisplay();
+            resultDiv.textContent = `Wpłacono ${depositAmount}!`;
+        }
+
+        function updateBalanceDisplay() {
+            balanceDiv.textContent = `Bilans: ${balance}`;
+            // Aktualizujemy bilans w pozostałych zakładkach, jeśli to konieczne
+        }
+
+        function openTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.tab[onclick="openTab('${tabName}')"]`).classList.add('active');
+        }
+    </script>
+</body>
+</html>
