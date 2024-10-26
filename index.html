@@ -15,7 +15,7 @@
             width: 90%;
             max-width: 800px;
             margin: 0 auto;
-            position: relative; /* Dodajemy pozycjonowanie dla kontenera */
+            position: relative;
         }
         h1 {
             font-size: 48px;
@@ -87,12 +87,12 @@
             color: #ffffff;
         }
         #balance {
-            position: fixed; /* Przeniesienie do rogu ekranu */
-            top: 20px;       /* Odstęp od góry */
-            right: 20px;     /* Odstęp od prawej krawędzi */
-            font-size: 32px; /* Zwiększenie rozmiaru czcionki */
-            font-weight: bold; /* Użycie pogrubienia */
-            color: #ffbf00;  /* Kolor bilansu */
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffbf00;
         }
         #result {
             margin-top: 20px;
@@ -109,6 +109,7 @@
             <div class="tab active" onclick="openTab('slot-machine')">Slot Machine</div>
             <div class="tab" onclick="openTab('roulette')">Roulette</div>
             <div class="tab" onclick="openTab('blackjack')">Blackjack</div>
+            <div class="tab" onclick="openTab('deposit-tab')">Wpłaty</div> <!-- Nowa zakładka -->
         </div>
 
         <!-- Slot Machine Game -->
@@ -125,11 +126,6 @@
                 <button onclick="spin()">Obróć!</button>
             </div>
 
-            <div class="controls">
-                <input type="number" id="deposit" placeholder="Kwota wpłaty" min="1">
-                <button onclick="deposit()">Wpłać</button>
-            </div>
-
             <div id="result"></div>
         </div>
 
@@ -143,6 +139,16 @@
         <div id="blackjack" class="tab-content">
             <h2>Blackjack (Wkrótce)</h2>
             <p>Pracujemy nad dodaniem gry w blackjacka! Wkrótce dostępne.</p>
+        </div>
+
+        <!-- Deposit Tab Content -->
+        <div id="deposit-tab" class="tab-content">
+            <h2>Wpłaty</h2>
+            <div class="controls">
+                <input type="number" id="deposit" placeholder="Kwota wpłaty" min="1">
+                <button onclick="deposit()">Wpłać</button>
+            </div>
+            <div id="result-deposit"></div> <!-- Miejsce na wyniki wpłat -->
         </div>
     </div>
 
@@ -211,17 +217,16 @@
         function deposit() {
             let depositAmount = parseInt(document.getElementById('deposit').value);
             if (isNaN(depositAmount) || depositAmount <= 0) {
-                resultDiv.textContent = 'Wprowadź prawidłową kwotę!';
+                document.getElementById('result-deposit').textContent = 'Wprowadź prawidłową kwotę!';
                 return;
             }
             balance += depositAmount;
             updateBalanceDisplay();
-            resultDiv.textContent = `Wpłacono ${depositAmount}!`;
+            document.getElementById('result-deposit').textContent = `Wpłacono ${depositAmount}!`;
         }
 
         function updateBalanceDisplay() {
             balanceDiv.textContent = `Bilans: ${balance}`;
-            // Aktualizujemy bilans w pozostałych zakładkach, jeśli to konieczne
         }
 
         function openTab(tabName) {
